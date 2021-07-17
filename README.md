@@ -18,3 +18,10 @@ Description py file input and output is easy to modify
 
  I will add the function of automatic crawler stock price in the near future and predict unknown prices.
  The known idea is to use statistical methods to compensate the unknown price in the future and finally add it to the data set for training
+
+
+===Anaconda===
+
+http://pre.tir.tw/008/blog/output/conda_yml.html
+
+You can teach with others to build the environment
