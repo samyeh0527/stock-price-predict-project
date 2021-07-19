@@ -1,5 +1,6 @@
 
 import os
+from typing import ValuesView
 
 from keras.engine import training
 from CreateDataset import *
@@ -8,6 +9,7 @@ from NormalizeMult import NormalizeMult
 from SplitTrainAndTest import Split
 from Attention_model import Attention_model
 from FNormalizeMult import FNormalizeMult
+from Visualization import visualization
 import numpy as np
 import math
 from sklearn.metrics import mean_squared_error
@@ -38,20 +40,24 @@ main.py-----3.---SplitTrainAndTest.py           =>  {input:}    dataset,    test
             |
             7.---Attention_function.py          =>  {input:}    inputs
             |                                       {output:}   output_attention_mul
+            |
+            8.---Visualization.py               =>  {input:}    Name,originalvalue,predict
+                                                    {output:}   visualization image
 """
 
 
 
 class main():
     np.random.seed(1377)
+    os.environ["CUDA_VISIBLE_DEVICES"]="0"
     def __init__(self) -> None:
         self.path1 = 'D:/2344/2344TW.csv'
         self.path2 = 'D:/2344/4919TW.csv'
         self.look_back = 2
         self.TimeSteps = self.look_back
         self.Dims = 2
-        self.epochs = 18
-        self.batch_size= 128
+        self.epochs = 1800
+        self.batch_size= 268
         
 
 
@@ -59,18 +65,19 @@ class main():
         LoadData_obj= LoadData(self.path1,self.path2)
         testVaild,trainVaild ,dataset = LoadData_obj.load_path()
         #print(testVaild,trainVaild,dataset)
-
+        print(self.batch_size)
         split = Split(testVaild,trainVaild ,dataset)
         train , test, testVaild , trainVaild  = split.TrainAndTest()
         #print(train.shape , test.shape, testVaild.shape , trainVaild.shape)
 
         # normalize the dataset
-        start_NormalizeMult = NormalizeMult(dataset)
-        dataset,da_normalize = start_NormalizeMult.normalizemult()
-        start_NormalizeMult_train = NormalizeMult(train)
-        train,tr_normalize = start_NormalizeMult_train.normalizemult()
-        start_NormalizeMult_test = NormalizeMult(test)
-        test,te_normalize = start_NormalizeMult_test.normalizemult()
+       
+
+        dataset,da_normalize =NormalizeMult(dataset).normalizemult()
+
+        train,tr_normalize = NormalizeMult(train).normalizemult()
+    
+        test,te_normalize = NormalizeMult(test).normalizemult()
 
         createdataset =CreateDataset(self.look_back,train)
         trainX, trY = createdataset.create_dataset()
@@ -78,15 +85,16 @@ class main():
         
         createdataset =CreateDataset(self.look_back,test)
         testX, teY = createdataset.create_dataset()
-        #print(testX.shape, teY.shape)
+        
+        print(testX.shape, teY.shape)
         trainY,testY =trY[:,0],teY[:,0]
 
         attention_mode = Attention_model(self.Dims,self.TimeSteps)
         moedl_ = attention_mode.attention_model()
         moedl_.summary()
         moedl_.compile(loss='mean_squared_error', optimizer='adam')
-        View_history = moedl_.fit(trainX, trainY, epochs=self.epochs, batch_size =self.batch_size, verbose=1,validation_data=(testX, testY))
-
+        View_history = moedl_.fit(trainX, trainY, epochs=self.epochs, batch_size =self.batch_size, verbose=0,validation_data=(testX, testY))
+        
         #make predictions
         trainPredict = moedl_.predict(trainX)
         testPredict = moedl_.predict(testX)
@@ -106,20 +114,33 @@ class main():
         trV=trainVaild[:-(self.look_back+1),0] 
         print("D A C BiGRU")
         print('*  look_back=',self.look_back)
+
+        ''' 
         plt.plot(teV)       
         plt.plot(testPredict_FNormalizeMult,'r--')
         plt.ylabel('price')
         plt.xlabel('Date')
         plt.savefig('teV')
         plt.show()
+        '''
+        Datavisualization = visualization('tev',teV,testPredict_FNormalizeMult).visualization()
+
+
+
         testScore = math.sqrt(mean_squared_error(teV, testPredict_FNormalizeMult))
         print('*  FNormalizeMult Test Score: %.2f RMSE' % (testScore))
+        '''
         plt.plot(trV)
         plt.plot(trainPredict_FNormalizeMult,'r--')
         plt.ylabel('price')
         plt.xlabel('Date')
         plt.savefig('trV')
         plt.show()
+        '''
+        Datavisualization = visualization('trV',trV,trainPredict_FNormalizeMult).visualization()
+
+
+
         trainScore = math.sqrt(mean_squared_error(trV, trainPredict_FNormalizeMult))
         print('*  FNormalizeMult Train Score: %.2f RMSE' % (trainScore))
 
