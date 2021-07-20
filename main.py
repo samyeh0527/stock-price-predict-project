@@ -62,8 +62,8 @@ class main():
 
 
     def run(self):
-        LoadData_obj= LoadData(self.path1,self.path2)
-        testVaild,trainVaild ,dataset = LoadData_obj.load_path()
+
+        testVaild,trainVaild ,dataset = LoadData(self.path1,self.path2).load_path()
         #print(testVaild,trainVaild,dataset)
         print(self.batch_size)
         split = Split(testVaild,trainVaild ,dataset)
@@ -115,37 +115,12 @@ class main():
         print("D A C BiGRU")
         print('*  look_back=',self.look_back)
 
-        ''' 
-        plt.plot(teV)       
-        plt.plot(testPredict_FNormalizeMult,'r--')
-        plt.ylabel('price')
-        plt.xlabel('Date')
-        plt.savefig('teV')
-        plt.show()
-        '''
         Datavisualization = visualization('tev',teV,testPredict_FNormalizeMult).visualization()
-
-
-
         testScore = math.sqrt(mean_squared_error(teV, testPredict_FNormalizeMult))
         print('*  FNormalizeMult Test Score: %.2f RMSE' % (testScore))
-        '''
-        plt.plot(trV)
-        plt.plot(trainPredict_FNormalizeMult,'r--')
-        plt.ylabel('price')
-        plt.xlabel('Date')
-        plt.savefig('trV')
-        plt.show()
-        '''
         Datavisualization = visualization('trV',trV,trainPredict_FNormalizeMult).visualization()
-
-
-
         trainScore = math.sqrt(mean_squared_error(trV, trainPredict_FNormalizeMult))
         print('*  FNormalizeMult Train Score: %.2f RMSE' % (trainScore))
-
-
-
         #損失值
         plt.plot(View_history.history['loss'])
         plt.plot(View_history.history['val_loss'])
@@ -154,7 +129,7 @@ class main():
         plt.xlabel('Epoch')
         plt.legend(['Train', 'Test'], loc='upper left')
         plt.show()
-
+        
 if __name__ == '__main__':
     run = main()
     start = run.run()
