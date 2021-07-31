@@ -25,3 +25,8 @@ Description py file input and output is easy to modify
 http://pre.tir.tw/008/blog/output/conda_yml.html
 
 You can teach with others to build the environment
+===How to ues===
+
+down load all script and data(csv) the apply main.py
+
+if you want to adjust/Revise code should look "main.py" the relationship structure diagram is written in annotated way
