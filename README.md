@@ -32,3 +32,8 @@ You can teach with others to build the environment
 down load all script and data(csv) the apply main.py
 
 if you want to adjust/Revise code should look "main.py" the relationship structure diagram is written in annotated way
+
+
+
+### 11/09
+recently i'm busy so this project will be stop  if you have any problem or idea you can contact me 
